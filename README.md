@@ -76,6 +76,9 @@ npm start
 O site abrirá automaticamente em: `http://localhost:3000`
 
 ---
+<img width="1898" height="868" alt="Captura de tela 2026-01-28 122752" src="https://github.com/user-attachments/assets/28fd5a1a-4353-418e-8720-fb4cf50b863f" />
+
+---
 
 ## 👨‍💻 Autor
 
@@ -87,11 +90,5 @@ Desenvolvido por **Luiz Henrique**
 
 © 2026 Mascotas Exóticas. Todos os direitos reservados.
 
-```
 
-### 💡 Dicas Adicionais para o seu GitHub:
-1.  **Capturas de Ecrã:** Crie uma pasta chamada `screenshots` e adicione imagens da sua Vitrine e do Painel Admin. No README, pode incluí-las usando: `![Vitrine](screenshots/vitrine.png)`.
-2.  **Linguagem:** Como o seu projeto é um portfólio, este README em Português está ótimo para o mercado local, mas se pretender visibilidade internacional, pode criar uma versão em Inglês (`README.en.md`).
-3.  **Link do LinkedIn:** Não se esqueça de adicionar o link direto para o seu perfil do LinkedIn na seção de Autor!
 
-```
