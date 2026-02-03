@@ -10,14 +10,14 @@ const ProdutoService = {
   // Cadastra um novo animal
   cadastrar: (produto) => api.post('/produtos', produto),
 
-  // ATUALIZA um animal existente (Essa é a função que estava faltando!)
+  // Atualiza um animal existente
   atualizar: (id, produto) => api.put(`/produtos/${id}`, produto),
 
-  // REMOVE um animal da loja
+  // Remove um animal da loja
   excluir: (id) => api.delete(`/produtos/${id}`),
 
-  // Busca as categorias (usado para o filtro)
-  listarCategorias: () => api.get('/categorias'),
-};
+  // Busca as categorias (ESSA É A QUE ESTAVA DANDO ERRO)
+  listarCategorias: () => api.get('/categorias')
+}; // <--- Certifique-se de que o objeto fecha aqui
 
 export default ProdutoService;

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import ProdutoService from '../services/ProdutoService';
 
 const CategoryFilter = ({ onSelectCategory }) => {
+  // Adicione isso para testar
+  console.log("Serviço carregado:", ProdutoService); 
+
   const [categorias, setCategorias] = useState([]);
 
   useEffect(() => {

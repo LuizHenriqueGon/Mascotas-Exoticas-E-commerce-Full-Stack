@@ -1,17 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import ProdutoService from '../services/ProdutoService';
+import PedidoService from '../services/PedidoService'; // [Importante] Não esqueça de importar o novo serviço
 
 const AdminPage = () => {
+  // --- Estados para Gestão de Produtos ---
   const [produtos, setProdutos] = useState([]);
   const [formData, setFormData] = useState({ nome: '', descricao: '', preco: '', estoque: '', urlImagem: '' });
   const [editandoId, setEditandoId] = useState(null);
 
-  useEffect(() => { carregarProdutos(); }, []);
+  // --- Novo Estado para Histórico de Vendas ---
+  const [vendas, setVendas] = useState([]);
+
+  // Carrega tudo ao abrir a página
+  useEffect(() => { 
+    carregarProdutos();
+    carregarVendas();
+  }, []);
 
   const carregarProdutos = () => {
     ProdutoService.listarTodos().then(res => setProdutos(res.data));
   };
 
+  const carregarVendas = () => {
+    PedidoService.listarVendas()
+      .then(res => setVendas(res.data))
+      .catch(err => console.error("Erro ao carregar vendas", err));
+  };
+
+  // --- Funções do Formulário de Produtos ---
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -53,7 +69,7 @@ const AdminPage = () => {
     <div style={{ padding: '20px' }}>
       <h2>⚙️ Painel de Gestão - Mascotas Exóticas</h2>
       
-      {/* Formulário */}
+      {/* --- PARTE 1: Gestão de Produtos (Mantida) --- */}
       <form onSubmit={handleSubmit} style={formStyle}>
         <input name="nome" placeholder="Nome do Pet" value={formData.nome} onChange={handleInputChange} required />
         <input name="preco" placeholder="Preço" type="number" step="0.01" value={formData.preco} onChange={handleInputChange} required />
@@ -64,8 +80,8 @@ const AdminPage = () => {
         {editandoId && <button onClick={limparForm}>Cancelar</button>}
       </form>
 
-      {/* Tabela de Listagem */}
-      <table style={{ width: '100%', marginTop: '30px', borderCollapse: 'collapse' }}>
+      <h3 style={{ marginTop: '30px' }}>Inventário Atual</h3>
+      <table style={{ width: '100%', marginTop: '10px', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ backgroundColor: '#eee' }}>
             <th>ID</th>
@@ -90,10 +106,43 @@ const AdminPage = () => {
           ))}
         </tbody>
       </table>
+
+      {/* --- PARTE 2: Histórico de Vendas (Adicionada) --- */}
+      <hr style={{ margin: '40px 0', border: '2px solid #ccc' }} />
+
+      <h2>📜 Histórico de Vendas (Controle)</h2>
+      {vendas.length === 0 ? (
+        <p>Nenhuma venda registrada.</p>
+      ) : (
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr style={{ backgroundColor: '#34495e', color: 'white' }}>
+              <th style={{ padding: '10px' }}>ID Pedido</th>
+              <th>Cliente</th>
+              <th>Data</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {vendas.map(venda => (
+              <tr key={venda.id} style={{ borderBottom: '1px solid #eee', textAlign: 'center' }}>
+                <td style={{ padding: '10px' }}>#{venda.id}</td>
+                <td>{venda.nomeCliente}</td>
+                {/* Tratamento para não quebrar se a data for nula */}
+                <td>{venda.dataPedido ? new Date(venda.dataPedido).toLocaleDateString() : '-'}</td>
+                <td style={{ color: '#27ae60', fontWeight: 'bold' }}>
+                  R$ {venda.valorTotal ? venda.valorTotal.toFixed(2) : '0.00'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
 
+// --- Estilos CSS em JS ---
 const formStyle = { display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '400px', marginBottom: '20px' };
 const btnSalvarStyle = { backgroundColor: '#27ae60', color: 'white', border: 'none', padding: '10px', cursor: 'pointer' };
 const btnAcaoStyle = { marginRight: '5px', padding: '5px 10px', cursor: 'pointer', color: 'white', border: 'none', backgroundColor: '#3498db' };

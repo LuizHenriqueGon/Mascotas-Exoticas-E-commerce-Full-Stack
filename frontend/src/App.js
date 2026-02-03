@@ -1,39 +1,84 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Vitrine from './pages/Vitrine';
 import CartPage from './pages/CartPage';
 import AdminPage from './pages/AdminPage';
-import Footer from './components/Footer';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import MyOrdersPage from './pages/MyOrdersPage'; // <--- Importe a nova página
+import AuthService from './services/AuthService';
 
 function App() {
-  const [carrinho, setCarrinho] = useState([]);
+  const [cart, setCart] = useState([]);
+  const [usuario, setUsuario] = useState(null);
 
-  const adicionarAoCarrinho = (produto) => {
-    setCarrinho([...carrinho, produto]);
-    alert(`${produto.nome} foi adicionado ao carrinho!`);
+  useEffect(() => {
+    const usuarioSalvo = AuthService.getUsuario();
+    if (usuarioSalvo) {
+      setUsuario(usuarioSalvo);
+    }
+  }, []);
+
+  const addToCart = (produto) => {
+    setCart([...cart, produto]);
+    alert(`${produto.nome} adicionado ao carrinho!`);
   };
 
-  const removerDoCarrinho = (indexParaRemover) => {
-    setCarrinho(carrinho.filter((_, index) => index !== indexParaRemover));
+  const removeFromCart = (index) => {
+    const newCart = cart.filter((_, i) => i !== index);
+    setCart(newCart);
+  };
+
+  const limparCarrinho = () => {
+    setCart([]);
+  };
+
+  const handleLogout = () => {
+    AuthService.logout();
+    setUsuario(null);
+    alert("Você saiu do sistema.");
+  };
+
+  const RotaAdmin = ({ children }) => {
+    return usuario && usuario.admin ? children : <Navigate to="/login" />;
   };
 
   return (
     <Router>
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        {/* Passamos o tamanho do carrinho para a Navbar mostrar o número */}
-        <Navbar cartCount={carrinho.length} />
+      <Navbar cartCount={cart.length} usuario={usuario} onLogout={handleLogout} />
+      
+      <Routes>
+        <Route path="/" element={<Vitrine onAdd={addToCart} />} />
         
-        <main style={{ flex: 1 }}>
-          <Routes>
-            <Route path="/" element={<Vitrine onAdd={adicionarAoCarrinho} />} />
-            <Route path="/carrinho" element={<CartPage items={carrinho} onRemove={removerDoCarrinho} />} />
-            <Route path="/admin" element={<AdminPage />} />
-          </Routes>
-        </main>
+        {/* Passando o usuário para o CartPage */}
+        <Route 
+          path="/cart" 
+          element={
+            <CartPage 
+              items={cart} 
+              onRemove={removeFromCart} 
+              onLimparCarrinho={limparCarrinho} 
+              usuario={usuario} 
+            />
+          } 
+        />
         
-        <Footer />
-      </div>
+        {/* Nova rota de Meus Pedidos */}
+        <Route path="/meus-pedidos" element={<MyOrdersPage />} />
+        
+        <Route path="/login" element={<LoginPage onLogin={setUsuario} />} />
+        <Route path="/register" element={<RegisterPage />} />
+        
+        <Route 
+          path="/admin" 
+          element={
+            <RotaAdmin>
+              <AdminPage />
+            </RotaAdmin>
+          } 
+        />
+      </Routes>
     </Router>
   );
 }
