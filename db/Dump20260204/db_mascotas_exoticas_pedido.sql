@@ -16,28 +16,32 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `categoria`
+-- Table structure for table `pedido`
 --
 
-DROP TABLE IF EXISTS `categoria`;
+DROP TABLE IF EXISTS `pedido`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `categoria` (
+CREATE TABLE `pedido` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `nome` varchar(255) DEFAULT NULL,
+  `data_pedido` datetime(6) DEFAULT NULL,
+  `nome_cliente` varchar(255) DEFAULT NULL,
+  `valor_total` double DEFAULT NULL,
+  `usuario_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_prx5elpv558ah8pk8x18u56yc` (`nome`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `FK6uxomgomm93vg965o8brugt00` (`usuario_id`),
+  CONSTRAINT `FK6uxomgomm93vg965o8brugt00` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `categoria`
+-- Dumping data for table `pedido`
 --
 
-LOCK TABLES `categoria` WRITE;
-/*!40000 ALTER TABLE `categoria` DISABLE KEYS */;
-INSERT INTO `categoria` VALUES (2,'Anfíbios'),(4,'Aracnídeos'),(3,'Aves Exóticas'),(1,'Répteis');
-/*!40000 ALTER TABLE `categoria` ENABLE KEYS */;
+LOCK TABLES `pedido` WRITE;
+/*!40000 ALTER TABLE `pedido` DISABLE KEYS */;
+INSERT INTO `pedido` VALUES (1,'2026-02-03 14:27:28.609024','233',3600,NULL),(2,'2026-02-04 15:18:23.430557','luiz',25500,3);
+/*!40000 ALTER TABLE `pedido` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -49,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-28 12:34:00
+-- Dump completed on 2026-02-04 12:21:15

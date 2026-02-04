@@ -1,8 +1,7 @@
 package br.edu.ifsp.ecommerce.controller;
 
 import br.edu.ifsp.ecommerce.domain.Produto;
-import br.edu.ifsp.ecommerce.service.ProdutoService;
-import jakarta.validation.Valid;
+import br.edu.ifsp.ecommerce.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,43 +10,48 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/produtos")
-// ESSA LINHA É O QUE RESOLVE O ERRO DE REDE/CORS:
 @CrossOrigin(origins = "http://localhost:3000")
 public class ProdutoController {
 
     @Autowired
-    private ProdutoService service;
+    private ProdutoRepository repository;
 
-    // 1. Listar todos os animais (GET http://localhost:8080/produtos)
+    // Listar todos
     @GetMapping
     public List<Produto> listar() {
-        return service.listarTodos();
+        return repository.findAll();
     }
 
-    // 2. Buscar um animal específico pelo ID
+    // Buscar por ID (Usado na página de detalhes)
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> buscar(@PathVariable Long id) {
-        Produto produto = service.buscarPorId(id);
-        return ResponseEntity.ok(produto);
+    public ResponseEntity<Produto> buscarPorId(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(produto -> ResponseEntity.ok(produto))
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // 3. Cadastrar novo animal (POST http://localhost:8080/produtos)
+    // Criar novo
     @PostMapping
-    public Produto cadastrar(@Valid @RequestBody Produto produto) {
-        return service.salvar(produto);
+    public Produto salvar(@RequestBody Produto produto) {
+        return repository.save(produto);
     }
 
-    // 4. Atualizar um animal existente (PUT http://localhost:8080/produtos/{id})
-    @PutMapping("/{id}")
-    public ResponseEntity<Produto> atualizar(@PathVariable Long id, @Valid @RequestBody Produto produto) {
-        Produto atualizado = service.atualizar(id, produto);
+    // --- NOVO: Atualizar existente ---
+    @PutMapping
+    public ResponseEntity<Produto> atualizar(@RequestBody Produto produto) {
+        // Se não tiver ID, é erro
+        if (produto.getId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        // Salva por cima (atualiza)
+        Produto atualizado = repository.save(produto);
         return ResponseEntity.ok(atualizado);
     }
+    // ---------------------------------
 
-    // 5. Remover um animal (DELETE http://localhost:8080/produtos/{id})
+    // Excluir
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> remover(@PathVariable Long id) {
-        service.excluir(id);
-        return ResponseEntity.noContent().build();
+    public void excluir(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 }

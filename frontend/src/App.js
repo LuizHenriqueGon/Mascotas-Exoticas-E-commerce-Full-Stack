@@ -6,7 +6,8 @@ import CartPage from './pages/CartPage';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import MyOrdersPage from './pages/MyOrdersPage'; // <--- Importe a nova página
+import MyOrdersPage from './pages/MyOrdersPage';
+import ProductDetailsPage from './pages/ProductDetailsPage'; // <--- IMPORTE A NOVA PÁGINA
 import AuthService from './services/AuthService';
 
 function App() {
@@ -15,9 +16,7 @@ function App() {
 
   useEffect(() => {
     const usuarioSalvo = AuthService.getUsuario();
-    if (usuarioSalvo) {
-      setUsuario(usuarioSalvo);
-    }
+    if (usuarioSalvo) setUsuario(usuarioSalvo);
   }, []);
 
   const addToCart = (produto) => {
@@ -26,13 +25,10 @@ function App() {
   };
 
   const removeFromCart = (index) => {
-    const newCart = cart.filter((_, i) => i !== index);
-    setCart(newCart);
+    setCart(cart.filter((_, i) => i !== index));
   };
 
-  const limparCarrinho = () => {
-    setCart([]);
-  };
+  const limparCarrinho = () => setCart([]);
 
   const handleLogout = () => {
     AuthService.logout();
@@ -51,32 +47,24 @@ function App() {
       <Routes>
         <Route path="/" element={<Vitrine onAdd={addToCart} />} />
         
-        {/* Passando o usuário para o CartPage */}
+        {/* NOVA ROTA: DETALHES DO PRODUTO */}
         <Route 
-          path="/cart" 
-          element={
-            <CartPage 
-              items={cart} 
-              onRemove={removeFromCart} 
-              onLimparCarrinho={limparCarrinho} 
-              usuario={usuario} 
-            />
-          } 
+          path="/produto/:id" 
+          element={<ProductDetailsPage onAdd={addToCart} />} 
         />
         
-        {/* Nova rota de Meus Pedidos */}
-        <Route path="/meus-pedidos" element={<MyOrdersPage />} />
+        <Route 
+          path="/cart" 
+          element={<CartPage items={cart} onRemove={removeFromCart} onLimparCarrinho={limparCarrinho} usuario={usuario} />} 
+        />
         
+        <Route path="/meus-pedidos" element={<MyOrdersPage />} />
         <Route path="/login" element={<LoginPage onLogin={setUsuario} />} />
         <Route path="/register" element={<RegisterPage />} />
         
         <Route 
           path="/admin" 
-          element={
-            <RotaAdmin>
-              <AdminPage />
-            </RotaAdmin>
-          } 
+          element={<RotaAdmin><AdminPage /></RotaAdmin>} 
         />
       </Routes>
     </Router>

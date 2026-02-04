@@ -1,36 +1,33 @@
 package br.edu.ifsp.ecommerce.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Entity
 @Data
 public class Produto {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "O nome do produto é obrigatório")
-    @Size(min = 3, max = 100)
     private String nome;
-
-    @Column(columnDefinition = "TEXT")
-    private String descricao;
-
-    @NotNull(message = "O preço deve ser informado")
-    @Positive(message = "O preço deve ser maior que zero")
+    private String nomeCientifico;
+    private String grupo;
     private Double preco;
-
-    @NotNull(message = "A quantidade em estoque deve ser informada")
-    @Min(0)
     private Integer estoque;
-
     private String urlImagem;
 
-    // Relacionamento que criaremos a seguir
-    @ManyToOne
-    @JoinColumn(name = "categoria_id")
-    private Categoria categoria;
+    // --- NOVOS CAMPOS ---
+    private String localOrigem; // Ex: Austrália, Andes Chilenos
+    private String criador; // Ex: Criadouro Legalizado Aves do Sul
+    // --------------------
+
+    @Column(length = 4000) // Aumentamos para caber textos bem detalhados
+    private String descricao;
+
+    @Column(length = 4000)
+    private String alimentacao;
+
+    @Column(length = 4000)
+    private String habitat;
 }
